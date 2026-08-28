@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  MANAGER
+  CASHIER
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  SPLIT
+}
+
+enum SaleStatus {
+  COMPLETED
+  HOLD
+}
+
+// ─── Core Models ──────────────────────────────────────────────────────────────
+
+model Product {
+  id              Int        @id @default(autoincrement())
+  name            String
+  price           Float
+  stock           Int
+  defaultDiscount Int        @default(0)
+  category        String
+  uom             String
+  saleItems       SaleItem[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Customer {
+  id            Int      @id @default(autoincrement())
+  name          String
+  phone         String   @unique
+  loyaltyPoints Int      @default(0)
+  sales         Sale[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Supplier {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String
+  email     String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Employee {
+  id         Int          @id @default(autoincrement())
+  name       String
+  role       Role
+  sales      Sale[]
+  attendance Attendance[]
+  expenses   Expense[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
+
+model Sale {
+  id            Int           @id @default(autoincrement())
+  totalAmount   Float
+  tax           Float         @default(0)
+  discount      Float         @default(0)
+  paymentMethod PaymentMethod
+  status        SaleStatus    @default(COMPLETED)
+  employee      Employee      @relation(fields: [employeeId], references: [id])
+  employeeId    Int
+  customer      Customer?     @relation(fields: [customerId], references: [id])
+  customerId    Int?
+  items         SaleItem[]
+  createdAt     DateTime      @default(now())
+}
+
+model SaleItem {
+  id          Int     @id @default(autoincrement())
+  sale        Sale    @relation(fields: [saleId], references: [id])
+  saleId      Int
+  product     Product @relation(fields: [productId], references: [id])
+  productId   Int
+  quantity    Int
+  priceAtSale Float
+}
+
+model Expense {
+  id         Int      @id @default(autoincrement())
+  amount     Float
+  reason     String
+  date       DateTime @default(now())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int
+  createdAt  DateTime @default(now())
+}
+
+model Attendance {
+  id         Int       @id @default(autoincrement())
+  employee   Employee  @relation(fields: [employeeId], references: [id])
+  employeeId Int
+  clockIn    DateTime
+  clockOut   DateTime?
+  createdAt  DateTime  @default(now())
+}

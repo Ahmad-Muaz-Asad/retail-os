@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Retail OS
 
-## Getting Started
+## 1. PROJECT OVERVIEW
+This repository contains a comprehensive Retail OS application, structured into two main components:
+* **Frontend:** A Next.js Offline-First Progressive Web App (PWA) using RxDB for client-side data management and synchronization.
+* **Backend:** An Express API built with Node.js, leveraging a DynamoDB Single-Table design for the database architecture.
 
-First, run the development server:
+This architecture ensures a resilient, offline-capable application that can sync data intelligently when internet connectivity is restored.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 2. PREREQUISITES
+Before you begin, ensure you have the following installed on your local machine:
+* **Node.js** (v18 or higher recommended)
+* **Docker Desktop** (Required for spinning up the local DynamoDB container)
+
+## 3. ENVIRONMENT SETUP
+To configure the backend environment, you need to set up your environment variables. 
+Navigate to the `backend-services` directory and create a `.env` file with the following contents exactly as shown:
+
+```env
+PORT=4000
+DYNAMODB_TABLE_NAME=RetailOSTable
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 4. STEP-BY-STEP INSTALLATION
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Install Dependencies
+You need to install the NPM dependencies for both the frontend and backend applications. Open your terminal and run the following commands:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Backend:**
+```bash
+cd backend-services
+npm install
+```
 
-## Learn More
+**Frontend:**
+```bash
+cd frontend-app
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Spin up Local Database
+Ensure Docker Desktop is running, then start the local DynamoDB container. From the backend directory, run:
+```bash
+cd backend-services
+docker compose up -d
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Initialize and Seed Database
+Set up the DynamoDB table and populate it with initial seed data:
+```bash
+cd backend-services
+npx ts-node src/scripts/createTable.ts
+npx ts-node src/scripts/seedDb.ts
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Start the Application
+Run the development servers for both the backend and frontend.
 
-## Deploy on Vercel
+**Start the Backend:**
+```bash
+cd backend-services
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Start the Frontend:**
+```bash
+cd frontend-app
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 5. OFFLINE TESTING
+To test the offline capabilities of the Progressive Web App:
+1. Open the application in your browser (typically `http://localhost:3000`).
+2. Open the browser's Developer Tools (F12 or right-click and select "Inspect").
+3. Navigate to the **Network** tab.
+4. Select the **Offline** preset from the application's throttling dropdown to simulate network loss.
+5. Perform actions in the application (like creating, editing, or viewing items). RxDB will handle storing these modifications locally.
+6. Switch back to **No throttling** (Online), and observe the background synchronization engine seamlessly pushing your offline changes directly to the back-end Express API.

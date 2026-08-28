@@ -1,0 +1,6 @@
+/**
+ * CRM Domain — Placeholder
+ * Future: Customer profiles, Loyalty Points, Purchase history,
+ *         Supplier contacts, POS autocomplete data feed.
+ * DynamoDB SK pattern: CUSTOMER#<phone_number>
+ */

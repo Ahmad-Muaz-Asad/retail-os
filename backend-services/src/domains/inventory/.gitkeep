@@ -1,0 +1,5 @@
+/**
+ * Inventory Domain — Placeholder
+ * Future: Catalog CRUD, Stock management, Low-stock alerts, Supplier management.
+ * DynamoDB SK pattern: PRODUCT#<uuid>
+ */

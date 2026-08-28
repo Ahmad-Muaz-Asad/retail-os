@@ -1,0 +1,6 @@
+/**
+ * HR Domain — Placeholder
+ * Future: Employee CRUD, RBAC (Admin > Owner > Manager > Cashier),
+ *         Attendance Clock In/Out, Expense logging.
+ * DynamoDB SK pattern: EMPLOYEE#<uuid>
+ */
